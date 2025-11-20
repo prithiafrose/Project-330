@@ -110,8 +110,24 @@ a {
 }
 
 .error {
-  color: red;
-  margin-bottom: 5px;
+  color: #e74c3c;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.validation-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  min-height: 16px;
+}
+
+.validation-hint.valid {
+  color: #27ae60;
+}
+
+.validation-hint.invalid {
+  color: #e74c3c;
 }
 
 .loading {

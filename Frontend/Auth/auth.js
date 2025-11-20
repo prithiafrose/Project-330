@@ -71,12 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => 
           {if (userRole === 'admin') {
-  window.location.href = "/FrontendUI/admin/dashboard.html";
+  window.location.href = "../Admin/dashboard.html";
 } else if (userRole === 'student') {
-  window.location.href = "/frontend_js/Student_panel/dashboard.html";
+  window.location.href = "../Student/dashboard.html";
 } 
 else if (userRole === 'recruiter') {
-  window.location.href = "/FrontendUI/recruiter/dashboard.html";
+  window.location.href = "../Recruiter/dashboard.html";
 }
 else {
   alert("Invalid role returned from server!");
@@ -94,10 +94,66 @@ else {
   const registerForm = document.getElementById("registerSubmit");
 
   if (registerForm) {
+    // Real-time validation
+    const emailInput = registerForm.email;
+    const mobileInput = registerForm.mobile;
+    const error = document.getElementById("registerError");
+
+    // Email validation on blur
+    emailInput.addEventListener("blur", async () => {
+      const email = emailInput.value.trim();
+      const emailHint = document.getElementById("emailHint");
+      
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailHint.textContent = "Please enter a valid email format";
+        emailHint.className = "validation-hint invalid";
+      } else if (email) {
+        emailHint.textContent = "Validating...";
+        emailHint.className = "validation-hint";
+        try {
+          const res = await fetch(`${API_BASE}/check-email`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data = await res.json();
+          if (!data.valid) {
+            emailHint.textContent = data.message || "Invalid email address";
+            emailHint.className = "validation-hint invalid";
+          } else {
+            emailHint.textContent = "Email is valid";
+            emailHint.className = "validation-hint valid";
+          }
+        } catch (err) {
+          emailHint.textContent = "";
+          emailHint.className = "validation-hint";
+        }
+      } else {
+        emailHint.textContent = "";
+        emailHint.className = "validation-hint";
+      }
+    });
+
+    // Phone validation on input
+    mobileInput.addEventListener("input", () => {
+      const mobile = mobileInput.value.trim();
+      const mobileHint = document.getElementById("mobileHint");
+      
+      if (mobile && !/^[0][1][0-9]{0,9}$/.test(mobile)) {
+        mobileHint.textContent = "Phone must be 11 digits starting with 01";
+        mobileHint.className = "validation-hint invalid";
+      } else if (mobile && mobile.length === 11) {
+        mobileHint.textContent = "Phone number is valid";
+        mobileHint.className = "validation-hint valid";
+      } else {
+        mobileHint.textContent = "";
+        mobileHint.className = "validation-hint";
+      }
+    });
+
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const error = document.getElementById("registerError");
       const loading = document.getElementById("registerLoading");
 
       error.textContent = "";
@@ -142,11 +198,11 @@ const formData = {
 
         setTimeout(() => {
           if (userRole === 'admin') {
-  window.location.href = "/FrontendUI/admin/dashboard.html";
+  window.location.href = "../Admin/dashboard.html";
 } else if (userRole === 'student') {
-  window.location.href = "";
+  window.location.href = "../Student/dashboard.html";
 } else if (userRole === 'recruiter') {
-  window.location.href = "/FrontendUI/recruiter/dashboard.html";
+  window.location.href = "../Recruiter/dashboard.html";
 } else {
   alert("Invalid role returned from server!");
 }

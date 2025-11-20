@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const loading = document.getElementById("resetLoading");
 
     error.textContent = "";
-    loading.textContent = "Sending reset link...";
+    loading.textContent = "Sending reset code...";
 
     try {
-      const res = await fetch(`${API_BASE}/reset-password`, {
+      const res = await fetch(`${API_BASE}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email })
@@ -22,10 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       loading.textContent = "";
 
-      if (!res.ok) throw new Error(data.error || "Failed to send reset link");
+      if (!res.ok) throw new Error(data.error || "Failed to send reset code");
 
       error.style.color = "green";
-      error.textContent = data.message || "Reset link sent to your email!";
+      error.textContent = data.message || "Reset code sent to your email!";
     } catch (err) {
       loading.textContent = "";
       error.style.color = "red";
