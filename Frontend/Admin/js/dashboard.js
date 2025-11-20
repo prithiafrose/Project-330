@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Dashboard Error:", error);
   }
 
-  // ====================== Logout ======================
   document.getElementById("logout-btn").addEventListener("click", () => {
     localStorage.removeItem("token");
     window.location.href = "../../Auth/Login.html";

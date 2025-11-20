@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Listings</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="navbar">
+  <div class="logo">Admin Panel</div>
+  
+  <div class="navbar-right">
+    <div class="notification-wrapper">
+      <button id="notifBtn" class="notif-btn">
+        🔔
+        <span id="notifCount" class="notif-count">0</span>
+      </button>
+      <div id="notifDropdown" class="notif-dropdown">
+        <ul id="notifList">
+          <li>No notifications</li>
+        </ul>
+      </div>
+    </div>
+    <button id="logout-btn" class="logout-btn">Logout</button>
+  </div>
+</div>
+
+  <div class="sidebar">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="user.html">Users</a>
+    <a href="jobs.html" class="active">Job Listings</a>
+    <a href="profile.html">Profile</a>
+  </div>
+
+  <div class="main-content">
+    <h1>Job Listings</h1>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Job Title</th>
+            <th>Company</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Frontend Developer</td>
+            <td>TechCorp</td>
+            <td>Approved</td>
+            <td>
+              <button class="btn">Edit</button>
+              <button class="btn">Delete</button>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Backend Developer</td>
+            <td>DevSolutions</td>
+            <td>Pending</td>
+            <td>
+              <button class="btn">Approve</button>
+              <button class="btn">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="js/jobs.js"></script>
+</body>
+</html>

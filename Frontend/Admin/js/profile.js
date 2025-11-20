@@ -1,78 +1,149 @@
+// profile.js
+
 document.addEventListener("DOMContentLoaded", async () => {
-  checkAdminAuth();
-
-  const form = document.getElementById("profile-form");
-  const inputs = form.querySelectorAll("input");
-
-  // Load current profile
-  try {
-    const res = await fetchWithAuth("/profile"); // Uses the profileRoutes which finds user by ID/Token
-    // Wait, the admin route uses /profile? Or is it /admin/profile?
-    // Backend/routes/profileRoutes.js is mounted at /profile usually? 
-    // Let's check main Server.js later. Assuming /profile works for logged in user.
-    // BUT, profileRoutes.js specifically fetches `where: { role: "admin" }` hardcoded!
-    // That's a bit weird for a general profile route, but it works for the admin panel.
-    
-    if (res) {
-      const admin = await res.json();
-      // 0: Username, 1: Email, 2: Mobile
-      inputs[0].value = admin.username;
-      inputs[1].value = admin.email;
-      inputs[2].value = admin.mobile;
-    }
-  } catch (error) {
-    console.error("Error loading profile:", error);
+  // --- AUTH CHECK ---
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../Auth/login.html";
+    return;
   }
 
-  // Handle Update
+  const logoutBtn = document.getElementById("logout-btn");
+  const form = document.getElementById("profile-form");
+
+  const usernameInput = document.getElementById("username");
+  const emailInput = document.getElementById("email");
+  const mobileInput = document.getElementById("mobile");
+  const currentPasswordInput = document.getElementById("current_password");
+  const newPasswordInput = document.getElementById("new_password");
+  const confirmPasswordInput = document.getElementById("confirm_password");
+
+  // --- LOGOUT HANDLER ---
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "../Auth/login.html";
+  });
+
+  // --- NOTIFICATIONS (basic) ---
+  const notifBtn = document.getElementById("notifBtn");
+  const notifDropdown = document.getElementById("notifDropdown");
+  const notifList = document.getElementById("notifList");
+  const notifCount = document.getElementById("notifCount");
+
+  notifBtn.addEventListener("click", () => {
+    notifDropdown.classList.toggle("show");
+  });
+
+  async function loadNotifications() {
+    try {
+      const res = await fetch("/api/notifications", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      if (!res.ok) return;
+
+      const data = await res.json();
+      notifList.innerHTML = "";
+      if (data.length === 0) {
+        notifList.innerHTML = "<li>No notifications</li>";
+      } else {
+        data.forEach(notif => {
+          const li = document.createElement("li");
+          li.textContent = notif.message;
+          notifList.appendChild(li);
+        });
+      }
+      notifCount.textContent = data.length;
+    } catch (err) {
+      console.error("Failed to load notifications:", err);
+    }
+  }
+
+  loadNotifications();
+
+  // --- LOAD PROFILE ---
+  async function loadProfile() {
+    try {
+      const res = await fetch("/api/profile", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch profile");
+
+      const admin = await res.json();
+      usernameInput.value = admin.username;
+      emailInput.value = admin.email;
+      mobileInput.value = admin.mobile;
+    } catch (err) {
+      console.error("Error loading profile:", err);
+      alert("Failed to load profile data");
+    }
+  }
+
+  await loadProfile();
+
+  // --- PROFILE FORM SUBMIT ---
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = inputs[0].value;
-    const email = inputs[1].value;
-    const mobile = inputs[2].value;
-    const current_password = inputs[3].value;
-    const new_password = inputs[4].value;
-    const confirm_password = inputs[5].value;
-
-    // Update Info
+    // Update profile info
     try {
-      const updateRes = await fetchWithAuth("/profile", {
+      const updateRes = await fetch("/api/profile", {
         method: "PUT",
-        body: JSON.stringify({ username, email, mobile })
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          username: usernameInput.value,
+          email: emailInput.value,
+          mobile: mobileInput.value
+        })
       });
-      
-      if(updateRes && updateRes.ok) {
-        alert("Profile details updated.");
+
+      if (updateRes.ok) {
+        alert("Profile updated successfully");
       } else {
-        alert("Failed to update profile details.");
+        const err = await updateRes.json();
+        alert(err.error || "Failed to update profile");
       }
 
-      // Update Password if provided
-      if (current_password && new_password) {
-        if (new_password !== confirm_password) {
-          alert("New passwords do not match!");
+      // Update password if provided
+      if (currentPasswordInput.value && newPasswordInput.value) {
+        if (newPasswordInput.value !== confirmPasswordInput.value) {
+          alert("New passwords do not match");
           return;
         }
 
-        const passRes = await fetchWithAuth("/profile/password", {
+        const passRes = await fetch("/api/profile/password", {
           method: "PUT",
-          body: JSON.stringify({ current_password, new_password })
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            current_password: currentPasswordInput.value,
+            new_password: newPasswordInput.value
+          })
         });
 
-        if (passRes && passRes.ok) {
-            alert("Password updated successfully.");
-            inputs[3].value = "";
-            inputs[4].value = "";
-            inputs[5].value = "";
+        if (passRes.ok) {
+          alert("Password updated successfully");
+          currentPasswordInput.value = "";
+          newPasswordInput.value = "";
+          confirmPasswordInput.value = "";
         } else {
-            const err = await passRes.json();
-            alert(err.error || "Failed to update password");
+          const err = await passRes.json();
+          alert(err.error || "Failed to update password");
         }
       }
-
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert("An error occurred while updating profile");
     }
   });
 });
