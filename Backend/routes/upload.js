@@ -1,36 +1,31 @@
-// Backend/routes/upload.js
 const express = require("express");
-const router = express.Router();
-const multer = require("multer");
-const path = require("path");
+const upload = require("../config/multer");
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
+const router = express.Router();
+
+router.post("/profile-image", upload.single("image"), (req, res) => {
+  res.json({
+    imageUrl: req.file.path,
+    message: "Uploaded successfully!"
+  });
 });
 
-const upload = multer({ storage: storage });
+router.post("/resume", (req, res) => {
+  upload.single("resume")(req, res, (err) => {
+    if (err) {
+      console.error("Upload error:", err);
+      return res.status(400).json({ error: err.message || "File upload failed" });
+    }
 
-// POST /api/upload - Upload file
-router.post("/", upload.single('file'), async (req, res) => {
-  try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    
-    res.json({ 
-      message: "File uploaded successfully",
-      filename: req.file.filename,
-      path: `/uploads/${req.file.filename}`
+
+    res.json({
+      resumeUrl: req.file.path,
+      message: "Resume uploaded successfully!"
     });
-  } catch (error) {
-    res.status(500).json({ error: "Server error" });
-  }
+  });
 });
 
 module.exports = router;
