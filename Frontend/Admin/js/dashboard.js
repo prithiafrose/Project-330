@@ -37,6 +37,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const data = await pendingRes.json();
       cards[2].textContent = data.pendingCount;
     }
+    document.getElementById("totalJobsCard").addEventListener("click", () => {
+  window.location.href = "jobs.html";
+});
+document.getElementById("pendingJobsCard").addEventListener("click", () => {
+  window.location.href = "jobs.html?filter=pending";
+});
 
     // 4. Recent Registrations
     const recentRes = await fetchWithAuth("/admin/users/recent");
