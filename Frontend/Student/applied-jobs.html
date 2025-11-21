@@ -7,6 +7,24 @@
     
 </head>
 <body>
+   <div class="navbar">
+  <div class="logo">Admin Panel</div>
+
+  <div class="navbar-right">
+    <div class="notification-wrapper">
+      <button id="notifBtn" class="notif-btn">
+        🔔
+        <span id="notifCount" class="notif-count">0</span>
+      </button>
+      <div id="notifDropdown" class="notif-dropdown">
+        <ul id="notifList">
+          <li>No notifications</li>
+        </ul>
+      </div>
+    </div>
+    <button id="logout" class="logout-btn">Logout</button>
+  </div>
+</div>
 
   <!-- Sidebar -->
   <div class="sidebar">
@@ -14,7 +32,6 @@
     <a href="job-list.html">Jobs</a>
     <a href="applied-jobs.html">Applied Jobs</a>
     <a href="profile.html">Profile</a>
-     <button id="logout-btn" class="logout-btn">Logout</button>
   </div>
 
   <!-- Main content -->
@@ -39,6 +56,6 @@
     </div>
   </div>
 
-  <script src="applied-jobs.js"></script>
+  <script src="Js/applied-jobs.js"></script>
 </body>
 </html>
