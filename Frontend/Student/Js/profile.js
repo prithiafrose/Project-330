@@ -27,6 +27,11 @@ async function loadProfile() {
   } catch (err) {
     console.error(err);
     alert(err.message);
+    // Redirect to login page if user is not logged in
+    if (err.message === "User not logged in") {
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `../Auth/Login.html?redirect=${currentUrl}`;
+    }
   }
 }
 
