@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Details</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="job-list.html">Jobs</a>
+    <a href="applied-jobs.html">Applied Jobs</a>
+    <a href="profile.html">Profile</a>
+     <button id="logout-btn" class="logout-btn">Logout</button>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <h1>Job Details</h1>
+    <div class="card" id="job-details">
+      <!-- Job info loaded dynamically via JS -->
+      <p>Loading job details...</p>
+    </div>
+  </div>
+
+  <!-- Use main.js which contains all the logic -->
+  <script src="job-details.js"></script>
+</body>
+</html>

@@ -91,13 +91,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ====================== Clickable Cards ======================
+    
+    document.addEventListener("DOMContentLoaded", () =>{
     document.getElementById("totalJobsCard").addEventListener("click", () => {
       window.location.href = "jobs.html";
     });
      document.getElementById("totalUsersCard").addEventListener("click", () => {
       window.location.href = "user.html";
     });
-
+    });
 
     document.getElementById("pendingJobsCard").addEventListener("click", () => {
       window.location.href = "jobs.html?filter=pending";
@@ -107,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Dashboard Error:", error);
   }
 
-  document.getElementById("logout-btn").addEventListener("click", () => {
+  document.getElementById("logout").addEventListener("click", () => {
     localStorage.removeItem("token");
     window.location.href = "../../Auth/Login.html";
   });
