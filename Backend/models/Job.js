@@ -49,10 +49,6 @@ const Job = sequelize.define("Job", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
 }, {
   tableName: 'jobs',
   timestamps: false,
@@ -86,7 +82,7 @@ Job.searchJobs = async function({ query, page = 1, limit = 10, filters = {} }) {
     where: whereClause,
     limit,
     offset,
-    order: [['createdAt', 'DESC']]
+    order: [['created_at', 'DESC']]
   });
   
   return { jobs: rows, total: count };

@@ -1,15 +1,15 @@
-const sequelize = require('./config/db');
-const Job = require('./models/Job');
+//const sequelize = require('./config/db');
+//const Job = require('./models/Job');
 const User = require('./models/User');
 
 async function createTestData() {
   try {
     await sequelize.sync();
-    
+
     // Create a test admin user if not exists
     const bcrypt = require('bcryptjs');
     const adminPassword = await bcrypt.hash('admin123', 10);
-    
+
     const [admin, created] = await User.findOrCreate({
       where: { email: 'admin@test.com' },
       defaults: {
@@ -20,11 +20,11 @@ async function createTestData() {
         role: 'admin'
       }
     });
-    
+
     if (created) {
       console.log('Admin user created');
     }
-    
+
     // Create test jobs
     const testJobs = [
       {
@@ -58,18 +58,18 @@ async function createTestData() {
         posted_by: admin.id
       }
     ];
-    
+
     for (const jobData of testJobs) {
       const [job, jobCreated] = await Job.findOrCreate({
         where: { title: jobData.title, company: jobData.company },
         defaults: jobData
       });
-      
+
       if (jobCreated) {
         console.log(`Created job: ${job.title}`);
       }
     }
-    
+
     console.log('Test data created successfully!');
     process.exit(0);
   } catch (error) {

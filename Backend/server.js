@@ -11,6 +11,8 @@ const jobRoutes = require("./routes/jobs.js");
 const recruiterRoutes = require("./routes/recruiter.js");
 const applicationsRoutes = require("./routes/applications.js");
 const adminRoutes = require("./routes/admin.js");
+const studentRoutes = require("./routes/student.js");
+const studentApplicationsRoutes = require("./routes/studentApplications.js");
 const path = require("path");
 
 
@@ -40,6 +42,8 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationsRoutes);
 app.use("/api/recruiter", recruiterRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/student", studentApplicationsRoutes);
 app.use("/apply-job", applicationsRoutes);
 
 // Start server after syncing DB

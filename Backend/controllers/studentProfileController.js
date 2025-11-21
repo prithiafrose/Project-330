@@ -1,7 +1,5 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-const Job = require("../models/Job");
-const Application = require("../models/Application");
 
 const getStudentProfile = async (req, res) => {
   try {
@@ -25,7 +23,7 @@ const getStudentProfile = async (req, res) => {
 const updateStudentProfile = async (req, res) => {
   try {
     const userId = req.user?.id;
-    const { username, email, mobile, current_password, new_password, full_name, skills, education, experience } = req.body;
+    const { username, email, mobile, password, current_password, new_password, full_name, skills, education, experience } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: "Student not found" });
@@ -84,46 +82,4 @@ const updateStudentProfile = async (req, res) => {
   }
 };
 
-const getStudentDashboard = async (req, res) => {
-  try {
-    const userId = req.user?.id;
-    if (!userId) return res.status(401).json({ error: "Unauthorized" });
-
-    // Get total jobs count
-    const totalJobsResult = await Job.findAndCountAll();
-    const totalJobs = totalJobsResult.count;
-
-    // Get user's applications count
-    const applicationsResult = await Application.findAndCountAll({
-      where: { user_id: userId }
-    });
-    const totalApplications = applicationsResult.count;
-
-    // Get user profile for completion calculation
-    const user = await User.findByPk(userId, {
-      attributes: ["full_name", "email", "mobile", "skills", "education", "experience"]
-    });
-
-    if (!user) return res.status(404).json({ error: "Student not found" });
-
-    // Calculate profile completion
-    const fields = ['full_name', 'email', 'mobile', 'skills', 'education', 'experience'];
-    const filled = fields.filter(field => {
-      const value = user[field];
-      return value && value !== null && value !== undefined && value.toString().trim() !== '';
-    });
-    const profileCompletion = Math.round((filled.length / fields.length) * 100);
-
-    res.json({
-      totalJobs,
-      totalApplications,
-      profileCompletion,
-      user: user
-    });
-  } catch (err) {
-    console.error("Dashboard error:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-
-module.exports = { getStudentProfile, updateStudentProfile, getStudentDashboard };
+module.exports = { getStudentProfile, updateStudentProfile };

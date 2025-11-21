@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { getStudentProfile, updateStudentProfile } = require("../controllers/studentController");
+const { getStudentProfile, updateStudentProfile, getStudentDashboard } = require("../controllers/studentController");
 const authMiddleware = require("../middleware/authMiddleware");
+
+// Get student dashboard data
+router.get("/dashboard", authMiddleware, getStudentDashboard);
 
 // Get student profile
 router.get("/profile", authMiddleware, getStudentProfile);
