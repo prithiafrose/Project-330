@@ -25,28 +25,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const usersRes = await fetchWithAuth("/admin/users/stats");
     if (usersRes) {
       const data = await usersRes.json();
-      document.getElementById("totalUsers").textContent = data.totalUsers;
+      document.querySelector("#totalUsersCard p").textContent = data.totalUsers;
     }
 
     // 2. Total Jobs
     const jobsRes = await fetchWithAuth("/admin/jobs/stats");
     if (jobsRes) {
       const data = await jobsRes.json();
-      document.getElementById("totalJobs").textContent = data.totalJobs;
+      document.querySelector("#totalJobsCard p").textContent = data.totalJobs;
     }
 
     // 3. Pending Job Approvals
     const pendingRes = await fetchWithAuth("/admin/jobs/pending");
     if (pendingRes) {
       const data = await pendingRes.json();
-      document.getElementById("pendingJobs").textContent = data.pendingCount;
+      document.querySelector("#pendingJobsCard p").textContent = data.pendingCount;
     }
 
     // 4. Recent Registrations
     const recentRes = await fetchWithAuth("/admin/users/recent");
     if (recentRes) {
       const data = await recentRes.json();
-      document.getElementById("recentUsers").textContent = data.recentCount;
+      document.querySelector(".card:nth-child(4) p").textContent = data.recentCount;
     }
 
     // ====================== Recent Job Postings ======================

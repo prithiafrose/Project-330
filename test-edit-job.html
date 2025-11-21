@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Edit Job</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Test Edit Job Functionality</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testEditJob() {
+            const results = document.getElementById('results');
+            
+            // Test 1: Get a job to edit
+            try {
+                const response = await fetch('http://localhost:5001/api/admin/jobs/1', {
+                    headers: {
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkB0ZXN0LmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzY5NTI4OSwiZXhwIjoxNzY0MzAwMDg5fQ.dhBr2qn4rZ42CzSQoL0ZnEChufaYW-gL1kOvzG5B0oU',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const job = await response.json();
+                    results.innerHTML += `<div class="test-result success">✓ GET job by ID works: ${job.title}</div>`;
+                    
+                    // Test 2: Update the job
+                    const updateResponse = await fetch('http://localhost:5001/api/admin/jobs/1', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkB0ZXN0LmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzY5NTI4OSwiZXhwIjoxNzY0MzAwMDg5fQ.dhBr2qn4rZ42CzSQoL0ZnEChufaYW-gL1kOvzG5B0oU',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title: 'Updated Frontend Developer',
+                            company: 'TechCorp Updated',
+                            location: 'New York, NY',
+                            type: 'Full-time',
+                            salary: '$85,000 - $125,000',
+                            description: 'Updated description for frontend developer position...'
+                        })
+                    });
+                    
+                    if (updateResponse.ok) {
+                        results.innerHTML += `<div class="test-result success">✓ PUT update job works</div>`;
+                    } else {
+                        results.innerHTML += `<div class="test-result error">✗ PUT update job failed: ${updateResponse.status}</div>`;
+                    }
+                } else {
+                    results.innerHTML += `<div class="test-result error">✗ GET job by ID failed: ${response.status}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<div class="test-result error">✗ Network error: ${error.message}</div>`;
+            }
+        }
+        
+        testEditJob();
+    </script>
+</body>
+</html>

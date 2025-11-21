@@ -11,7 +11,7 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <a href="dashboard.html">Dashboard</a>
-    <a href="users.html" class="active">Users</a>
+    <a href="user.html" class="active">Users</a>
     <a href="jobs.html">Job Listings</a>
     <a href="profile.html">Profile</a>
   </div>
@@ -42,7 +42,7 @@
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3>All Users</h3>
-        <button class="btn" onclick="alert('Add user form here')">+ Add New User</button>
+        <button class="btn" id="add-user-btn">+ Add New User</button>
       </div>
 
       <!-- Users Table -->
@@ -58,45 +58,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Admin</td>
-            <td>admin@jobportal.com</td>
-            <td>+880123456789</td>
-            <td>Admin</td>
-            <td>
-              <button class="btn" onclick="alert('Edit user')">Edit</button>
-              <button class="btn" style="background-color:#ff4d4d" onclick="alert('Delete user')">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>JohnDoe</td>
-            <td>john@example.com</td>
-            <td>+880987654321</td>
-            <td>Candidate</td>
-            <td>
-              <button class="btn" onclick="alert('Edit user')">Edit</button>
-              <button class="btn" style="background-color:#ff4d4d" onclick="alert('Delete user')">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>JaneSmith</td>
-            <td>jane@example.com</td>
-            <td>+880112233445</td>
-            <td>Employer</td>
-            <td>
-              <button class="btn" onclick="alert('Edit user')">Edit</button>
-              <button class="btn" style="background-color:#ff4d4d" onclick="alert('Delete user')">Delete</button>
-            </td>
-          </tr>
+          <!-- Users will be dynamically loaded here -->
         </tbody>
       </table>
     </div>
   </div>
 
-  <script src="js/users.js"></script>
+  <script src="js/auth-helper.js"></script>
+  <script src="js/user.js"></script>
 </body>
 </html>
 

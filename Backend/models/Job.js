@@ -49,6 +49,10 @@ const Job = sequelize.define("Job", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
 }, {
   tableName: 'jobs',
   timestamps: false,
@@ -56,5 +60,62 @@ const Job = sequelize.define("Job", {
 
 Job.belongsTo(User, { foreignKey: 'posted_by', as: 'poster' });
 User.hasMany(Job, { foreignKey: 'posted_by', as: 'jobs' });
+
+// Static methods for job operations
+Job.searchJobs = async function({ query, page = 1, limit = 10, filters = {} }) {
+  const offset = (page - 1) * limit;
+  const whereClause = {};
+  
+  if (query) {
+    whereClause[require('sequelize').Op.or] = [
+      { title: { [require('sequelize').Op.like]: `%${query}%` } },
+      { company: { [require('sequelize').Op.like]: `%${query}%` } },
+      { description: { [require('sequelize').Op.like]: `%${query}%` } }
+    ];
+  }
+  
+  if (filters.type) whereClause.type = filters.type;
+  if (filters.location) whereClause.location = { [require('sequelize').Op.like]: `%${filters.location}%` };
+  if (filters.minSalary || filters.maxSalary) {
+    whereClause.salary = {};
+    if (filters.minSalary) whereClause.salary[require('sequelize').Op.gte] = filters.minSalary;
+    if (filters.maxSalary) whereClause.salary[require('sequelize').Op.lte] = filters.maxSalary;
+  }
+  
+  const { count, rows } = await Job.findAndCountAll({
+    where: whereClause,
+    limit,
+    offset,
+    order: [['createdAt', 'DESC']]
+  });
+  
+  return { jobs: rows, total: count };
+};
+
+Job.getJobById = async function(id) {
+  return await Job.findByPk(id, {
+    include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }]
+  });
+};
+
+Job.updateJob = async function(id, fields) {
+  const job = await Job.findByPk(id);
+  if (!job) throw new Error('Job not found');
+  
+  Object.keys(fields).forEach(key => {
+    if (fields[key] !== undefined) {
+      job[key] = fields[key];
+    }
+  });
+  
+  await job.save();
+  return job;
+};
+
+Job.deleteJob = async function(id) {
+  const job = await Job.findByPk(id);
+  if (!job) throw new Error('Job not found');
+  await job.destroy();
+};
 
 module.exports = Job;
