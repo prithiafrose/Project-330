@@ -15,7 +15,6 @@ const User = sequelize.define("User", {
   email: {
     type: DataTypes.STRING(100),
     allowNull: false,
-    unique: true,
   },
   mobile: {
     type: DataTypes.STRING(20),
@@ -36,6 +35,14 @@ const User = sequelize.define("User", {
   resetPasswordExpires: {
     type: DataTypes.BIGINT,
     allowNull: true,
+  },
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
   },
 }, {
   tableName: 'users',

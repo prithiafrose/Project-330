@@ -231,11 +231,24 @@ const resetPassword = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user?.id;
-    const { username, email, mobile, password } = req.body;
+    const { username, email, mobile, password, currentPassword } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
+    // Validate current password if changing password
+    if (password) {
+      if (!currentPassword) {
+        return res.status(400).json({ error: "Current password is required to change password" });
+      }
+
+      const validPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!validPassword) {
+        return res.status(401).json({ error: "Current password is incorrect" });
+      }
+    }
+
+    // Update fields if provided
     if (username) user.username = username;
     if (email) user.email = email;
     if (mobile) user.mobile = mobile;

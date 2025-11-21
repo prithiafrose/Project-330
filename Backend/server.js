@@ -10,6 +10,7 @@ const Job = require("./models/Job.js");
 const jobRoutes = require("./routes/jobs.js");
 const recruiterRoutes = require("./routes/recruiter.js");
 const applicationsRoutes = require("./routes/applications.js");
+const adminRoutes = require("./routes/admin.js");
 const path = require("path");
 
 
@@ -26,15 +27,11 @@ app.use(cors({
 }));
 
 // Serve static files
-const frontendUIPath = path.resolve(__dirname, '../FrontendUI');
-const frontendJsPath = path.resolve(__dirname, '../frontend_js');
+const frontendPath = path.resolve(__dirname, '../Frontend');
 
-console.log(`Serving FrontendUI from: ${frontendUIPath}`);
-console.log(`Serving frontend_js from: ${frontendJsPath}`);
+console.log(`Serving Frontend from: ${frontendPath}`);
 
-app.use('/frontend_js', express.static(frontendJsPath)); // Serve frontend_js specific route first
-app.use('/FrontendUI', express.static(frontendUIPath));
-app.use(express.static(frontendUIPath)); // Serve FrontendUI at root
+app.use(express.static(frontendPath)); // Serve Frontend at root
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -42,13 +39,14 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationsRoutes);
 app.use("/api/recruiter", recruiterRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/apply-job", applicationsRoutes);
 
 // Start server after syncing DB
 const PORT = process.env.PORT || 5001;
 (async () => {
   try {
-    await sequelize.sync({ alter: true }); // ✅ Sync database and alter tables to match models
+    await sequelize.sync(); // ✅ Sync database without forcing alterations
     console.log("✅ Database synced successfully.");
     app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
   } catch (err) {

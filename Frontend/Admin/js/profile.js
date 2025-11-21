@@ -66,80 +66,141 @@ document.addEventListener("DOMContentLoaded", async () => {
   // --- LOAD PROFILE ---
   async function loadProfile() {
     try {
-      const res = await fetch("/api/profile", {
+      console.log("Loading admin profile...");
+      console.log("Token:", token ? "exists" : "missing");
+      console.log("Token value:", token.substring(0, 20) + "...");
+      
+      // Try with full URL first
+      const API_BASE = "http://localhost:5001";
+      const res = await fetch(`${API_BASE}/api/auth/me`, {
+        method: "GET",
         headers: {
+          "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
-        }
+        },
+        credentials: 'include'
       });
 
-      if (!res.ok) throw new Error("Failed to fetch profile");
+      console.log("Response status:", res.status);
+      console.log("Response ok:", res.ok);
 
-      const admin = await res.json();
-      usernameInput.value = admin.username;
-      emailInput.value = admin.email;
-      mobileInput.value = admin.mobile;
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Error response:", errorText);
+        throw new Error(`Failed to fetch profile: ${res.status} - ${errorText}`);
+      }
+
+      const data = await res.json();
+      console.log("Profile data:", data);
+      
+      if (!data.user) {
+        throw new Error("No user data in response");
+      }
+
+      const admin = data.user;
+      usernameInput.value = admin.username || "";
+      emailInput.value = admin.email || "";
+      mobileInput.value = admin.mobile || "";
+      
+      console.log("Profile loaded successfully");
     } catch (err) {
       console.error("Error loading profile:", err);
-      alert("Failed to load profile data");
+      
+      // Try fallback with stored user data
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          console.log("Using stored user data:", user);
+          usernameInput.value = user.username || "";
+          emailInput.value = user.email || "";
+          mobileInput.value = user.mobile || "";
+          return;
+        } catch (parseErr) {
+          console.error("Failed to parse stored user data:", parseErr);
+        }
+      }
+      
+      alert(`Failed to load profile: ${err.message}`);
+      // Set default values on error
+      usernameInput.value = "";
+      emailInput.value = "";
+      mobileInput.value = "";
+      usernameInput.placeholder = "Failed to load";
+      emailInput.placeholder = "Failed to load";
+      mobileInput.placeholder = "Failed to load";
     }
   }
 
   await loadProfile();
 
-  // --- PROFILE FORM SUBMIT ---
+// --- PROFILE FORM SUBMIT ---
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Update profile info
+    // Validate password fields if new password is provided
+    if (newPasswordInput.value) {
+      if (!currentPasswordInput.value) {
+        alert("Current password is required to change password");
+        return;
+      }
+      
+      if (newPasswordInput.value !== confirmPasswordInput.value) {
+        alert("New passwords do not match");
+        return;
+      }
+    }
+
+    // Prepare update data
+    const updateData = {
+      username: usernameInput.value,
+      email: emailInput.value,
+      mobile: mobileInput.value
+    };
+
+    // Only include password fields if new password is provided
+    if (newPasswordInput.value) {
+      updateData.password = newPasswordInput.value;
+      updateData.currentPassword = currentPasswordInput.value;
+    }
+
     try {
-      const updateRes = await fetch("/api/profile", {
+      console.log("Updating profile with data:", updateData);
+      
+      const API_BASE = "http://localhost:5001";
+      const updateRes = await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({
-          username: usernameInput.value,
-          email: emailInput.value,
-          mobile: mobileInput.value
-        })
+        credentials: 'include',
+        body: JSON.stringify(updateData)
       });
 
+      console.log("Update response status:", updateRes.status);
+
       if (updateRes.ok) {
+        const data = await updateRes.json();
+        console.log("Update response:", data);
         alert("Profile updated successfully");
+        
+        // Update stored user data
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+        
+        // Clear password fields
+        currentPasswordInput.value = "";
+        newPasswordInput.value = "";
+        confirmPasswordInput.value = "";
+        
+        // Reload profile to get updated data
+        await loadProfile();
       } else {
         const err = await updateRes.json();
+        console.error("Update error:", err);
         alert(err.error || "Failed to update profile");
-      }
-
-      // Update password if provided
-      if (currentPasswordInput.value && newPasswordInput.value) {
-        if (newPasswordInput.value !== confirmPasswordInput.value) {
-          alert("New passwords do not match");
-          return;
-        }
-
-        const passRes = await fetch("/api/profile/password", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            current_password: currentPasswordInput.value,
-            new_password: newPasswordInput.value
-          })
-        });
-
-        if (passRes.ok) {
-          alert("Password updated successfully");
-          currentPasswordInput.value = "";
-          newPasswordInput.value = "";
-          confirmPasswordInput.value = "";
-        } else {
-          const err = await passRes.json();
-          alert(err.error || "Failed to update password");
-        }
       }
     } catch (err) {
       console.error("Error updating profile:", err);
