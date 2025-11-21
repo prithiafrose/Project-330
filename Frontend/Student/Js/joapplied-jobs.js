@@ -48,7 +48,7 @@ async function loadAppliedJobs() {
     tableBody.innerHTML = `<tr><td colspan="4">Loading applications...</td></tr>`;
 
     try {
-        const res = await fetch(`${API_BASE}/applications/my-applications`, {
+        const res = await fetch(`${API_BASE}/student/applied-jobs`, {
             headers: getAuthHeaders()
         });
 
@@ -76,3 +76,33 @@ async function loadAppliedJobs() {
         tableBody.innerHTML = `<tr><td colspan="4" style="color:red">${err.message}</td></tr>`;
     }
 }
+
+// ==================== Logout Function ====================
+document.getElementById("logout").addEventListener("click", async () => {
+    try {
+        const token = localStorage.getItem("token");
+        
+        if (token) {
+            try {
+                await fetch(`${API_BASE}/auth/logout`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+            } catch (err) {
+                console.log("Logout endpoint not available, clearing local storage");
+            }
+        }
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "../Auth/Login.html";
+    } catch (err) {
+        console.error(err);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "../Auth/Login.html";
+    }
+});

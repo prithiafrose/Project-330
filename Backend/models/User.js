@@ -40,6 +40,22 @@ const User = sequelize.define("User", {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+  full_name: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  skills: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  education: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  experience: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

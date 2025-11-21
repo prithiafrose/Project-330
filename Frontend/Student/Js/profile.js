@@ -1,3 +1,6 @@
+// Base URL for backend API
+const API_BASE = "http://localhost:5001";
+
 // Get form elements
 const profileForm = document.getElementById("profile-form");
 
@@ -7,7 +10,7 @@ async function loadProfile() {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("User not logged in");
 
-    const res = await fetch("/api/profile", {
+    const res = await fetch(`${API_BASE}/api/student/profile`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -51,7 +54,7 @@ profileForm.addEventListener("submit", async (e) => {
 
   try {
     // Update basic profile info
-    let res = await fetch("/api/profile", {
+    let res = await fetch(`${API_BASE}/api/student/profile`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +73,7 @@ profileForm.addEventListener("submit", async (e) => {
         return;
       }
 
-      res = await fetch("/api/profile/password", {
+      res = await fetch(`${API_BASE}/api/student/profile/password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -94,5 +97,118 @@ profileForm.addEventListener("submit", async (e) => {
   } catch (err) {
     console.error(err);
     alert(err.message);
+  }
+});
+
+// Update skills function
+async function updateSkills() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User not logged in");
+      return;
+    }
+
+    const skills = document.getElementById("skillsInput").value;
+
+    const res = await fetch(`${API_BASE}/api/student/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ skills })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to update skills");
+
+    alert("Skills updated successfully");
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+}
+
+// Handle password form submission
+const passwordForm = document.getElementById("password-form");
+if (passwordForm) {
+  passwordForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User not logged in");
+      return;
+    }
+
+    const currentPassword = document.getElementById("currentPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (newPassword !== confirmPassword) {
+      alert("New password and confirm password do not match");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/student/profile/password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update password");
+
+      alert("Password updated successfully");
+
+      // Clear password fields
+      document.getElementById("currentPassword").value = "";
+      document.getElementById("newPassword").value = "";
+      document.getElementById("confirmPassword").value = "";
+
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  });
+}
+
+// Logout function
+document.getElementById("logout").addEventListener("click", async () => {
+  try {
+    const token = localStorage.getItem("token");
+    
+    if (token) {
+      // Call logout endpoint if available
+      try {
+        await fetch(`${API_BASE}/api/auth/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          }
+        });
+      } catch (err) {
+        console.log("Logout endpoint not available, clearing local storage");
+      }
+    }
+
+    // Clear local storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    
+    // Redirect to login page
+    window.location.href = "../Auth/Login.html";
+  } catch (err) {
+    console.error(err);
+    // Still redirect even if logout API fails
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "../Auth/Login.html";
   }
 });

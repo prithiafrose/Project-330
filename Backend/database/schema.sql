@@ -52,7 +52,15 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) NOT NULL UNIQUE,
     mobile VARCHAR(20) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('student','recruiter','admin') DEFAULT 'student'
+    role ENUM('student','recruiter','admin') DEFAULT 'student',
+    full_name VARCHAR(255),
+    skills TEXT,
+    education VARCHAR(255),
+    experience INT,
+    isActive BOOLEAN DEFAULT TRUE,
+    resetPasswordToken VARCHAR(255),
+    resetPasswordExpires BIGINT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create jobs table

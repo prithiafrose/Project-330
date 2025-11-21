@@ -1,6 +1,6 @@
 // Test script to verify auth endpoints
 
-const API_BASE = 'http://localhost:5001/api/auth';
+//const API_BASE = 'http://localhost:5001/api/auth';
 
 async function testAuth() {
   try {
@@ -17,10 +17,10 @@ async function testAuth() {
         role: 'student'
       })
     });
-    
+
     const registerData = await registerResponse.json();
     console.log('Registration response:', registerData);
-    
+
     if (registerResponse.ok) {
       // Test login
       console.log('\nTesting login...');
@@ -33,11 +33,11 @@ async function testAuth() {
           role: 'student'
         })
       });
-      
+
       const loginData = await loginResponse.json();
       console.log('Login response:', loginData);
     }
-    
+
   } catch (error) {
     console.error('Test error:', error);
   }
