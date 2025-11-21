@@ -39,6 +39,8 @@ profileForm.addEventListener("submit", async (e) => {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("User not logged in");
+    const currentUrl = encodeURIComponent(window.location.href);
+    window.location.href = `../Auth/Login.html?redirect=${currentUrl}`;
     return;
   }
 
@@ -106,6 +108,8 @@ async function updateSkills() {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("User not logged in");
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `../Auth/Login.html?redirect=${currentUrl}`;
       return;
     }
 
@@ -139,6 +143,8 @@ if (passwordForm) {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("User not logged in");
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `../Auth/Login.html?redirect=${currentUrl}`;
       return;
     }
 
@@ -171,10 +177,15 @@ if (passwordForm) {
       document.getElementById("newPassword").value = "";
       document.getElementById("confirmPassword").value = "";
 
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+    // Redirect to login page if user is not logged in
+    if (err.message === "User not logged in") {
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `../Auth/Login.html?redirect=${currentUrl}`;
     }
+  }
   });
 }
 
