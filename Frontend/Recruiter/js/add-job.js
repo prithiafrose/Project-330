@@ -116,7 +116,7 @@ document.getElementById("jobForm").addEventListener("submit", async (e) => {
           window.location.href = "my-jobs.html";
         } else {
           // Or go to homepage to see the job
-          window.location.href = "../index.html";
+          window.location.href = "";
         }
       }, 3000);
     } else {
