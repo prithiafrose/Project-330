@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const recentRes = await fetchWithAuth("/admin/users/recent");
     if (recentRes) {
       const data = await recentRes.json();
-      document.querySelector(".card:nth-child(4) p").textContent = data.recentCount;
+      document.querySelector("#recentRegistrationsCard p").textContent = data.recentCount;
     }
 
     // ====================== Recent Job Postings ======================
@@ -69,6 +69,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           recentJobs.appendChild(li);
         });
       }
+    }
+
+    // ====================== User Status Stats ======================
+    const userStatusRes = await fetchWithAuth("/admin/users/status");
+    if (userStatusRes) {
+      const data = await userStatusRes.json();
+      document.querySelector("#userStatus").textContent = `Active: ${data.active}, Inactive: ${data.inactive}`;
     }
 
     // ====================== Notifications ======================

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard Test</title>
+</head>
+<body>
+    <h1>Admin Dashboard Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testDashboard() {
+            const results = document.getElementById('results');
+            
+            // First login as admin
+            try {
+                const loginResponse = await fetch('http://localhost:5001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@test.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                const token = loginData.token;
+                
+                results.innerHTML += '<p>✅ Login successful</p>';
+                
+                // Test all dashboard endpoints
+                const endpoints = [
+                    { path: '/admin/users/stats', name: 'Users Stats' },
+                    { path: '/admin/jobs/stats', name: 'Jobs Stats' },
+                    { path: '/admin/jobs/pending', name: 'Pending Jobs' },
+                    { path: '/admin/users/recent', name: 'Recent Users' },
+                    { path: '/admin/jobs/recent', name: 'Recent Jobs' },
+                    { path: '/admin/users/status', name: 'User Status' },
+                    { path: '/admin/notifications', name: 'Notifications' }
+                ];
+                
+                for (const endpoint of endpoints) {
+                    try {
+                        const response = await fetch(`http://localhost:5001/api${endpoint.path}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        const data = await response.json();
+                        results.innerHTML += `<p>✅ ${endpoint.name}: ${JSON.stringify(data)}</p>`;
+                    } catch (error) {
+                        results.innerHTML += `<p>❌ ${endpoint.name}: ${error.message}</p>`;
+                    }
+                }
+                
+            } catch (error) {
+                results.innerHTML += `<p>❌ Login failed: ${error.message}</p>`;
+            }
+        }
+        
+        testDashboard();
+    </script>
+</body>
+</html>

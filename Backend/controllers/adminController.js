@@ -51,7 +51,7 @@ const getRecentUsersStats = async (req, res) => {
 const getRecentJobs = async (req, res) => {
   try {
     const recentJobs = await Job.findAll({
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
       limit: 5,
       attributes: ['id', 'title', 'company']
     });
@@ -205,7 +205,7 @@ const getAllJobs = async (req, res) => {
 
     const jobs = await Job.findAll({
       where: whereClause,
-      include: [{ model: User, as: 'poster', attributes: ['name', 'email'] }]
+      include: [{ model: User, as: 'poster', attributes: ['username', 'email'] }]
     });
     res.json(jobs);
   } catch (error) {

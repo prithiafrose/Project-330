@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Test</title>
+</head>
+<body>
+    <h1>Registration Test</h1>
+    <div id="result"></div>
+    
+    <script>
+        const API_BASE = "/api/auth";
+        
+        async function testRegistration() {
+            const resultDiv = document.getElementById('result');
+            
+            const formData = {
+                username: 'TestUser',
+                email: 'test@example.com',
+                mobile: '01234567890',
+                password: 'password123',
+                role: 'student'
+            };
+            
+            try {
+                console.log('Sending registration data:', formData);
+                
+                const res = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                console.log('Response status:', res.status);
+                console.log('Response headers:', res.headers);
+
+                const text = await res.text();
+                console.log('Response text:', text);
+                
+                if (!text) {
+                    resultDiv.innerHTML = `<p style="color: red;">Server returned empty response</p>`;
+                    return;
+                }
+
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (parseErr) {
+                    resultDiv.innerHTML = `<p style="color: red;">JSON Parse Error: ${parseErr.message}</p><p>Response: ${text}</p>`;
+                    return;
+                }
+                
+                if (res.ok) {
+                    resultDiv.innerHTML = `<p style="color: green;">Success: ${JSON.stringify(data)}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error || 'Unknown error'}</p>`;
+                }
+                
+            } catch (err) {
+                resultDiv.innerHTML = `<p style="color: red;">Network Error: ${err.message}</p>`;
+            }
+        }
+        
+        // Run test
+        testRegistration();
+    </script>
+</body>
+</html>

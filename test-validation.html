@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .validation-hint {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            min-height: 18px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .validation-hint.valid {
+            color: #27ae60;
+            background: #d5f4e6;
+            border-left: 3px solid #27ae60;
+        }
+        .validation-hint.invalid {
+            color: #e74c3c;
+            background: #fdf2f2;
+            border-left: 3px solid #e74c3c;
+        }
+        button {
+            background: #6C63FF;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #574fe4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Email & Phone Validation Test</h1>
+    
+    <form id="testForm">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter email">
+            <small class="validation-hint" id="emailHint"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="mobile">Mobile:</label>
+            <input type="tel" id="mobile" name="mobile" placeholder="Enter mobile number" maxlength="11">
+            <small class="validation-hint" id="mobileHint"></small>
+        </div>
+
+        <button type="submit">Test Validation</button>
+    </form>
+
+    <script>
+        const API_BASE = "http://localhost:5001/api/auth";
+        
+        // Debounce function
+        const debounce = (func, delay) => {
+            let timeoutId;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        };
+
+        // Email validation
+        const validateEmail = async () => {
+            const emailInput = document.getElementById("email");
+            const email = emailInput.value.trim();
+            const emailHint = document.getElementById("emailHint");
+            
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                emailHint.textContent = "Please enter a valid email format";
+                emailHint.className = "validation-hint invalid";
+            } else if (email) {
+                emailHint.textContent = "Validating...";
+                emailHint.className = "validation-hint";
+                try {
+                    const res = await fetch(`${API_BASE}/check-email`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email }),
+                    });
+                    const data = await res.json();
+                    if (data.valid) {
+                        emailHint.textContent = "Email is valid";
+                        emailHint.className = "validation-hint valid";
+                    } else {
+                        emailHint.textContent = data.message || "Invalid email address";
+                        emailHint.className = "validation-hint invalid";
+                    }
+                } catch (err) {
+                    emailHint.textContent = "Unable to validate email";
+                    emailHint.className = "validation-hint invalid";
+                }
+            } else {
+                emailHint.textContent = "";
+                emailHint.className = "validation-hint";
+            }
+        };
+
+        // Phone validation
+        const validatePhone = () => {
+            const mobileInput = document.getElementById("mobile");
+            const mobile = mobileInput.value.trim();
+            const mobileHint = document.getElementById("mobileHint");
+            
+            if (mobile && !/^[01][0-9]*$/.test(mobile)) {
+                mobileHint.textContent = "Phone must start with 01 and contain only digits";
+                mobileHint.className = "validation-hint invalid";
+            } else if (mobile && mobile.length === 11) {
+                if (/^[01][0-9]{9}$/.test(mobile)) {
+                    mobileHint.textContent = "Phone number is valid";
+                    mobileHint.className = "validation-hint valid";
+                } else {
+                    mobileHint.textContent = "Phone must be 11 digits starting with 01";
+                    mobileHint.className = "validation-hint invalid";
+                }
+            } else if (mobile && mobile.length < 11) {
+                if (mobile.startsWith('01')) {
+                    mobileHint.textContent = `Enter ${11 - mobile.length} more digits`;
+                    mobileHint.className = "validation-hint";
+                } else {
+                    mobileHint.textContent = "Phone must start with 01";
+                    mobileHint.className = "validation-hint invalid";
+                }
+            } else {
+                mobileHint.textContent = "";
+                mobileHint.className = "validation-hint";
+            }
+        };
+
+        // Event listeners
+        document.getElementById("email").addEventListener("blur", validateEmail);
+        document.getElementById("email").addEventListener("input", () => {
+            const emailInput = document.getElementById("email");
+            const emailHint = document.getElementById("emailHint");
+            if (emailInput.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+                emailHint.textContent = "Please enter a valid email format";
+                emailHint.className = "validation-hint invalid";
+            } else if (!emailInput.value) {
+                emailHint.textContent = "";
+                emailHint.className = "validation-hint";
+            } else {
+                debounce(validateEmail, 800)();
+            }
+        });
+
+        document.getElementById("mobile").addEventListener("input", (e) => {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+            e.target.value = value;
+            validatePhone();
+        });
+        document.getElementById("mobile").addEventListener("blur", validatePhone);
+
+        document.getElementById("testForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("Form validation test completed!");
+        });
+    </script>
+</body>
+</html>

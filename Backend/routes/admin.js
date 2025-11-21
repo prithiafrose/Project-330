@@ -7,7 +7,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const adminAuthMiddleware = require('../middleware/adminMiddleware');
 
 // Get admin dashboard stats
-router.get('/users/stats', authMiddleware, async (req, res) => {
+router.get('/users/stats', adminAuthMiddleware, async (req, res) => {
   try {
     const totalUsers = await User.count();
     res.json({ totalUsers });
@@ -16,7 +16,7 @@ router.get('/users/stats', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/jobs/stats', authMiddleware, async (req, res) => {
+router.get('/jobs/stats', adminAuthMiddleware, async (req, res) => {
   try {
     const totalJobs = await Job.count();
     res.json({ totalJobs });
@@ -25,7 +25,7 @@ router.get('/jobs/stats', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/jobs/pending', authMiddleware, async (req, res) => {
+router.get('/jobs/pending', adminAuthMiddleware, async (req, res) => {
   try {
     const pendingCount = await Job.count({ where: { status: 'pending' } });
     res.json({ pendingCount });
@@ -34,7 +34,7 @@ router.get('/jobs/pending', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/users/recent', authMiddleware, async (req, res) => {
+router.get('/users/recent', adminAuthMiddleware, async (req, res) => {
   try {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -52,10 +52,10 @@ router.get('/users/recent', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/jobs/recent', authMiddleware, async (req, res) => {
+router.get('/jobs/recent', adminAuthMiddleware, async (req, res) => {
   try {
     const recentJobs = await Job.findAll({
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
       limit: 5,
       attributes: ['id', 'title', 'company']
     });
@@ -65,7 +65,7 @@ router.get('/jobs/recent', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/users/status', authMiddleware, async (req, res) => {
+router.get('/users/status', adminAuthMiddleware, async (req, res) => {
   try {
     const activeUsers = await User.count({ where: { isActive: true } });
     const inactiveUsers = await User.count({ where: { isActive: false } });
@@ -75,7 +75,7 @@ router.get('/users/status', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/notifications', authMiddleware, async (req, res) => {
+router.get('/notifications', adminAuthMiddleware, async (req, res) => {
   try {
     const pendingJobs = await Job.count({ where: { status: 'pending' } });
     const count = pendingJobs;
@@ -286,6 +286,25 @@ router.delete('/jobs/:id', adminAuthMiddleware, async (req, res) => {
     
     await job.destroy();
     res.json({ message: "Job deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single job by ID
+router.get('/jobs/:id', adminAuthMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const job = await Job.findByPk(id, {
+      include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }]
+    });
+    
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    res.json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
