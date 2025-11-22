@@ -6,7 +6,7 @@
 }
 
 body {
-  background: #0d1b2a;
+  background:#0d1b2a;
   color: white;
   display: flex;
   min-height: 100vh;
@@ -15,7 +15,7 @@ body {
 /* ====================== Sidebar ====================== */
 .sidebar {
   width: 240px;
-  background: #1b2a49;
+  background: #4e6781;
   padding: 25px;
   display: flex;
   flex-direction: column;
@@ -33,6 +33,8 @@ body {
   display: block;
   border-radius: 6px;
   transition: 0.3s;
+  direction: none;
+    text-decoration: none;
   font-size: 16px;
 }
 
@@ -67,7 +69,7 @@ body {
 
 /* ====================== Cards ====================== */
 .card {
-  background: #1b2a49;
+  background: #7396db;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 20px;
@@ -126,12 +128,12 @@ table th, table td {
 }
 
 table th {
-  background: #1b2a49;
+  background: #8f9ab1;
   color: #64ffda;
 }
 
 table tr:hover {
-  background: #0d1b2a;
+  background: #5b7fa5;
 }
 
 /* ====================== Job Actions ====================== */
