@@ -68,9 +68,10 @@ a:hover {
 /* ------------------ Right Image ------------------ */
 .login-image {
   width: 50%;
-  background: url("https://i.ibb.co/4f1Pxqv/login-bg.jpg") center/cover no-repeat;
+  background: url("https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940") center/cover no-repeat;
   position: relative;
 }
+
 
 .login-image .overlay {
   position: absolute;
