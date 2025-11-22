@@ -43,36 +43,49 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==================== Load Applied Jobs ====================
 async function loadAppliedJobs() {
     const tableBody = document.getElementById("applied-jobs-body");
-    if (!tableBody) return;
+    if (!tableBody) {
+        console.error("Table body element not found!");
+        return;
+    }
 
     tableBody.innerHTML = `<tr><td colspan="4">Loading applications...</td></tr>`;
+
+    console.log("Loading applied jobs...");
+    console.log("Token:", localStorage.getItem('token'));
+    console.log("User:", JSON.parse(localStorage.getItem('user')));
 
     try {
         const res = await fetch(`${API_BASE}/student/applied-jobs`, {
             headers: getAuthHeaders()
         });
 
+        console.log("Response status:", res.status);
         const data = await res.json();
+        console.log("Response data:", data);
 
         if (!res.ok) throw new Error(data.error || "Failed to fetch applications");
 
         const applications = Array.isArray(data) ? data : (data.applications || []);
+        console.log("Applications found:", applications.length);
 
         if (applications.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="4">You haven't applied to any jobs yet.</td></tr>`;
             return;
         }
 
-        tableBody.innerHTML = applications.map(app => `
+        tableBody.innerHTML = applications.map(app => {
+            console.log("Processing app:", app);
+            return `
             <tr>
                 <td>${escapeHTML(app.Job ? (app.Job.title || app.Job.job_position) : 'Job Deleted')}</td>
                 <td>${escapeHTML(app.Job ? (app.Job.company || app.Job.company_name) : 'N/A')}</td>
                 <td>${escapeHTML(app.Job ? app.Job.location : 'N/A')}</td>
                 <td><span class="status ${app.status.toLowerCase()}">${escapeHTML(app.status)}</span></td>
             </tr>
-        `).join("");
+        `}).join("");
 
     } catch (err) {
+        console.error("Error loading applied jobs:", err);
         tableBody.innerHTML = `<tr><td colspan="4" style="color:red">${err.message}</td></tr>`;
     }
 }

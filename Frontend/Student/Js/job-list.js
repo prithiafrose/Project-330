@@ -105,7 +105,10 @@ async function fetchJobs(filters = {}) {
         <p><strong>Salary:</strong> $${job.salary || job.monthly_salary || "N/A"}</p>
         <p><strong>Skills:</strong> ${escapeHTML(job.skills || job.skills_required || "N/A")}</p>
         <p><strong>Type:</strong> ${escapeHTML(job.job_type || job.type || "N/A")}</p>
-        <a href="job-details.html?id=${job.id}" class="btn">View Details</a>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+          <a href="../Apply.html?id=${job.id}" class="btn">Apply Now</a>
+          <a href="job-details.html?id=${job.id}" class="btn">View Details</a>
+        </div>
       </div>
     `).join("");
 

@@ -60,7 +60,7 @@ User.hasMany(Job, { foreignKey: 'posted_by', as: 'jobs' });
 // Static methods for job operations
 Job.searchJobs = async function({ query, page = 1, limit = 10, filters = {} }) {
   const offset = (page - 1) * limit;
-  const whereClause = {};
+  const whereClause = { status: 'active' }; // Only show active jobs on homepage
   
   if (query) {
     whereClause[require('sequelize').Op.or] = [

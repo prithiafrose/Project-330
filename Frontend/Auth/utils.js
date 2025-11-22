@@ -43,7 +43,7 @@ function setAuthUI() {
   } else {
     link.textContent = 'Login';
 
-    link.href = '/FrontendUI/Auth/login.html';
+   link.href = '/Auth/Login.html';
 
 }
 

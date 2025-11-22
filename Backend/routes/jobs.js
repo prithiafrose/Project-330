@@ -24,6 +24,7 @@ const { listJobs, getJob } = require("../controllers/jobsController");
 const router = express.Router();
 
 // GET /jobs - Get all jobs (for homepage)
+//---public--//
 router.get("/", listJobs);
 
 // GET /jobs/:id - Get specific job details

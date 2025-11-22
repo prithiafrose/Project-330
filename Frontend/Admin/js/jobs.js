@@ -1,29 +1,23 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Check admin authentication
-  checkAdminAuth();
-
+  // ================= Initial Setup =================
+  await checkAdminAuth();
   const tableBody = document.querySelector("tbody");
-  const logoutBtn = document.getElementById("logout-btn");
+  const logoutBtn = document.getElementById("logout");
 
-  // Logout functionality
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "../Auth/login.html"; // adjust path
+    window.location.href = "../Auth/login.html";
   });
 
-  // Load job data for editing
+  // ================= Edit Job =================
   async function loadJobForEdit(id) {
     try {
       const res = await fetchWithAuth(`/admin/jobs/${id}`);
-      if (!res || !res.ok) {
-        alert("Failed to load job data");
-        return;
-      }
+      if (!res || !res.ok) return alert("Failed to load job data");
 
       const job = await res.json();
-      
-      // Populate form fields
+
       document.getElementById("editJobId").value = job.id;
       document.getElementById("editTitle").value = job.title;
       document.getElementById("editCompany").value = job.company;
@@ -31,24 +25,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("editType").value = job.type || 'Full-time';
       document.getElementById("editSalary").value = job.salary || '';
       document.getElementById("editDescription").value = job.description || '';
-      
-      // Show modal
+
       document.getElementById("editModal").style.display = "block";
     } catch (err) {
-      console.error("Error loading job for edit:", err);
+      console.error(err);
       alert("Error loading job data");
     }
   }
 
-  // Close edit modal
   window.closeEditModal = function() {
     document.getElementById("editModal").style.display = "none";
-  };
+  }
 
-  // Handle edit form submission
   async function handleEditSubmit(e) {
     e.preventDefault();
-    
     const id = document.getElementById("editJobId").value;
     const jobData = {
       title: document.getElementById("editTitle").value,
@@ -68,25 +58,33 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (res && res.ok) {
         alert("Job updated successfully");
         closeEditModal();
-        loadJobs(); // Refresh the table
+        loadJobs();
       } else {
         alert("Failed to update job");
       }
     } catch (err) {
-      console.error("Error updating job:", err);
+      console.error(err);
       alert("Error updating job");
     }
   }
 
-  // Fetch and render jobs
+  // ================= Load Jobs =================
   async function loadJobs() {
     try {
-      const res = await fetchWithAuth("/admin/jobs"); // your endpoint
-      if (!res || !res.ok) return;
+      const res = await fetchWithAuth("/admin/jobs");
+      if (!res || !res.ok) {
+        console.error("Failed to fetch jobs:", res ? res.status : "No response");
+        return;
+      }
 
       const jobs = await res.json();
+      console.log("Jobs loaded:", jobs); // Debug log
+      tableBody.innerHTML = "";
 
-      tableBody.innerHTML = ""; // clear table
+      if (jobs.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No jobs found</td></tr>';
+        return;
+      }
 
       jobs.forEach(job => {
         const row = document.createElement("tr");
@@ -94,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <td>${job.id}</td>
           <td>${job.title}</td>
           <td>${job.company}</td>
-          <td>${job.status}</td>
+          <td><span class="status-${job.status}">${job.status}</span></td>
           <td>
             ${job.status === "pending" ? `<button class="btn approve-btn" data-id="${job.id}">Approve</button>` : ''}
             <button class="btn edit-btn" data-id="${job.id}">Edit</button>
@@ -104,15 +102,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         tableBody.appendChild(row);
       });
 
-      // Attach event listeners after creating buttons
       attachJobListeners();
     } catch (err) {
       console.error("Error loading jobs:", err);
+      tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error loading jobs</td></tr>';
     }
   }
 
+  // ================= Button Listeners =================
   function attachJobListeners() {
-    // Approve buttons
     document.querySelectorAll(".approve-btn").forEach(btn => {
       btn.addEventListener("click", async (e) => {
         const id = e.target.dataset.id;
@@ -121,18 +119,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             const res = await fetchWithAuth(`/admin/jobs/${id}/approve`, { method: "PUT" });
             if (res && res.ok) {
               alert("Job approved successfully");
-              loadJobs(); // refresh table
+              loadJobs();
             } else {
               alert("Failed to approve job");
             }
-          } catch (err) {
-            console.error(err);
-          }
+          } catch (err) { console.error(err); }
         }
       });
     });
 
-    // Delete buttons
     document.querySelectorAll(".delete-btn").forEach(btn => {
       btn.addEventListener("click", async (e) => {
         const id = e.target.dataset.id;
@@ -145,36 +140,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             } else {
               alert("Failed to delete job");
             }
-          } catch (err) {
-            console.error(err);
-          }
+          } catch (err) { console.error(err); }
         }
       });
     });
 
-    // Edit buttons
     document.querySelectorAll(".edit-btn").forEach(btn => {
       btn.addEventListener("click", async (e) => {
-        const id = e.target.dataset.id;
-        await loadJobForEdit(id);
+        await loadJobForEdit(e.target.dataset.id);
       });
     });
   }
 
-  // Modal event listeners
+  // ================= Modal Events =================
   document.querySelector(".close").addEventListener("click", closeEditModal);
-  
-  // Close modal when clicking outside
-  window.addEventListener("click", (e) => {
-    const modal = document.getElementById("editModal");
-    if (e.target === modal) {
-      closeEditModal();
-    }
+  window.addEventListener("click", e => {
+    if (e.target === document.getElementById("editModal")) closeEditModal();
   });
-
-  // Edit form submission
   document.getElementById("editJobForm").addEventListener("submit", handleEditSubmit);
 
-  // Initial load
+  // ================= Initial Load =================
   loadJobs();
 });

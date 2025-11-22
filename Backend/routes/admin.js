@@ -209,7 +209,8 @@ router.get('/jobs', adminAuthMiddleware, async (req, res) => {
     
     const jobs = await Job.findAll({
       where: whereClause,
-      include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }]
+      include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }],
+      order: [['id', 'DESC']]
     });
     res.json(jobs);
   } catch (error) {
@@ -303,6 +304,23 @@ router.put('/jobs/:id/status', authMiddleware, async (req, res) => {
     );
     
     res.json({ message: `Job ${status} successfully` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single job for admin
+router.get('/jobs/:id', adminAuthMiddleware, async (req, res) => {
+  try {
+    const job = await Job.findByPk(req.params.id, {
+      include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }]
+    });
+    
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    res.json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -205,7 +205,8 @@ const getAllJobs = async (req, res) => {
 
     const jobs = await Job.findAll({
       where: whereClause,
-      include: [{ model: User, as: 'poster', attributes: ['name', 'email'] }]
+      include: [{ model: User, as: 'poster', attributes: ['username', 'email'] }],
+      order: [['id', 'DESC']]
     });
     res.json(jobs);
   } catch (error) {
