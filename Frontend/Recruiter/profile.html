@@ -82,6 +82,7 @@
       const updateData = { username, email, mobile };
       if (newPassword) {
         updateData.password = newPassword;
+        updateData.currentPassword = currentPassword;
       }
 
       fetch(API + "/auth/update-profile", {
