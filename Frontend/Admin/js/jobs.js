@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const res = await fetchWithAuth(`/admin/jobs/${id}`, {
         method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(jobData)
       });
 

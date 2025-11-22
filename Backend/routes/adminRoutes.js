@@ -21,5 +21,19 @@ router.post('/users', adminAuthMiddleware, adminController.createUser);
 // Job management
 router.get('/jobs', adminAuthMiddleware, adminController.getAllJobs);
 router.put('/jobs/:id/status', adminAuthMiddleware, adminController.updateJobStatus);
+// Update job details
+// Update job details
+router.put('/jobs/:id', adminAuthMiddleware, adminController.getUpdateJobs);
+
+// Approve job
+router.put('/jobs/:id/approve', adminAuthMiddleware, adminController.getApprovedJobs);
+
+// Delete a job
+router.delete('/jobs/:id', adminAuthMiddleware, adminController.getDeletedJobs);
+
+
+
+
+
 
 module.exports = router;

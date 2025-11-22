@@ -107,6 +107,8 @@ const getAllUsers = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+        await Application.destroy({ where: { user_id: id } });
+
     const user = await User.findByPk(id);
     
     if (!user) {
@@ -196,20 +198,37 @@ const createUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const updateJobStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const job = await Job.findByPk(id);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    await job.update({ status });
+    res.json({ message: `Job ${status} successfully` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // Get all jobs for admin
-const getAllJobs = async (req, res) => {
+const getAllJobs= async (req, res) => {
   try {
     const { filter } = req.query;
     let whereClause = {};
-
+    
     if (filter === 'pending') {
       whereClause.status = 'pending';
     }
-
+    
     const jobs = await Job.findAll({
       where: whereClause,
-      include: [{ model: User, as: 'poster', attributes: ['name', 'email'] }]
+      include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }],
+      order: [['id', 'DESC']]
     });
     res.json(jobs);
   } catch (error) {
@@ -217,18 +236,115 @@ const getAllJobs = async (req, res) => {
   }
 };
 
-// Approve/reject job
-const updateJobStatus = async (req, res) => {
+// Approve job
+const getApprovedJobs= async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    
+    const job = await Job.findByPk(id);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    await job.update({ status: 'active' });
+    
+    res.json({ message: "Job approved successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-    const job = await Job.update(
-      { status },
-      { where: { id } }
-    );
+// Update job
+const getUpdateJobs= async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, company, location, type, salary, description } = req.body;
+    
+    const job = await Job.findByPk(id);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    // Update fields
+    if (title) job.title = title;
+    if (company) job.company = company;
+    if (location) job.location = location;
+    if (type) job.type = type;
+    if (salary) job.salary = salary;
+    if (description) job.description = description;
+    
+    await job.save();
+    
+    res.json({ 
+      message: "Job updated successfully",
+      job: {
+        id: job.id,
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        type: job.type,
+        salary: job.salary,
+        description: job.description,
+        status: job.status
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-    res.json({ message: `Job ${status} successfully` });
+// Delete job
+const getDeletedJobs= async (req, res) => {
+  try {
+    const { id } = req.params;
+        await Application.destroy({ where: { job_id: id } });
+
+    const job = await Job.findByPk(id);
+    
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    await job.destroy();
+    res.json({ message: "Job deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get single job by ID
+const getSingleJobsByID =async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const job = await Job.findByPk(id, {
+      include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }]
+    });
+    
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    res.json(job);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+// Get single job for admin
+const getSingleJobs= async (req, res) => {
+  try {
+    const job = await Job.findByPk(req.params.id, {
+      include: [{ model: User, attributes: ['username', 'email'], as: 'poster' }]
+    });
+    
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    res.json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -247,5 +363,10 @@ module.exports = {
   updateUser,
   createUser,
   getAllJobs,
-  updateJobStatus
+  updateJobStatus,
+  getUpdateJobs,
+  getApprovedJobs,
+  getDeletedJobs,
+  getSingleJobsByID ,
+getSingleJobs
 };
