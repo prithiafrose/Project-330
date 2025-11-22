@@ -95,7 +95,7 @@ router.get('/notifications', adminAuthMiddleware, async (req, res) => {
 router.get('/users', adminAuthMiddleware, async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'username', 'email', 'mobile', 'role', 'created_at']
+      attributes: ['id', 'username', 'email', 'mobile', 'role', 'createdAt']
     });
     res.json(users);
   } catch (error) {

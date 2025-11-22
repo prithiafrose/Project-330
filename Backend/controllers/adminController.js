@@ -1,3 +1,5 @@
+
+
 const User = require('../models/User');
 const Job = require('../models/Job');
 const Application = require('../models/Application');
@@ -37,7 +39,7 @@ const getRecentUsersStats = async (req, res) => {
 
     const recentCount = await User.count({
       where: {
-        created_at: {
+        createdAt: {
           [require('sequelize').Op.gte]: sevenDaysAgo
         }
       }
@@ -91,10 +93,12 @@ const getNotifications = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'username', 'email', 'mobile', 'role', 'created_at']
+      attributes: ['id', 'username', 'email', 'mobile', 'role', 'createdAt']
     });
     res.json(users);
   } catch (error) {
+        console.error('Error fetching users:', error); // <-- log full error
+
     res.status(500).json({ error: error.message });
   }
 };
