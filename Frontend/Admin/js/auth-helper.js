@@ -39,13 +39,34 @@ async function fetchWithAuth(url, options = {}) {
   }
 }
 
-function checkAdminAuth() {
+async function checkAdminAuth() {
   const token = localStorage.getItem('token');
   if (!token) {
     window.location.href = '../../Auth/Login.html';
     return false;
   }
   
-  // You could add token validation here if needed
-  return true;
+  try {
+    // Verify token and check if user is admin
+    const response = await fetchWithAuth('/auth/me');
+    if (!response || !response.ok) {
+      localStorage.removeItem('token');
+      window.location.href = '../../Auth/Login.html';
+      return false;
+    }
+    
+    const data = await response.json();
+    if (data.user.role !== 'admin') {
+      localStorage.removeItem('token');
+      window.location.href = '../../Auth/Login.html';
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    localStorage.removeItem('token');
+    window.location.href = '../../Auth/Login.html';
+    return false;
+  }
 }

@@ -1,6 +1,32 @@
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE = "http://localhost:5001/api/auth";
 
+  // Preserve redirect parameter when navigating to register
+  const registerLink = document.getElementById("register-link");
+  if (registerLink) {
+    registerLink.addEventListener("click", (e) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get("redirect");
+      if (redirectUrl) {
+        e.preventDefault();
+        window.location.href = `register.html?redirect=${encodeURIComponent(redirectUrl)}`;
+      }
+    });
+  }
+
+  // Preserve redirect parameter when navigating to login from register
+  const loginLink = document.querySelector(".login-link a");
+  if (loginLink) {
+    loginLink.addEventListener("click", (e) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get("redirect");
+      if (redirectUrl) {
+        e.preventDefault();
+        window.location.href = `login.html?redirect=${encodeURIComponent(redirectUrl)}`;
+      }
+    });
+  }
+
   const togglePassword = (checkboxId, inputId) => {
     const checkbox = document.getElementById(checkboxId);
     const input = document.getElementById(inputId);
@@ -69,19 +95,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const userRole = data.user.role;
 
-        setTimeout(() => 
-          {if (userRole === 'admin') {
-  window.location.href = "../Admin/dashboard.html";
-} else if (userRole === 'student') {
-  window.location.href = "../Student/dashboard.html";
-} 
-else if (userRole === 'recruiter') {
-  window.location.href = "../Recruiter/dashboard.html";
-}
-else {
-  alert("Invalid role returned from server!");
-}
-
+        setTimeout(() => {
+          if (userRole === 'admin') {
+            window.location.href = "../Admin/dashboard.html";
+          } else if (userRole === 'student') {
+            window.location.href = "../Student/dashboard.html";
+          } else if (userRole === 'recruiter') {
+            window.location.href = "../Recruiter/dashboard.html";
+          } else {
+            alert("Invalid role returned from server!");
+          }
         }, 800);
       } catch (err) {
         loading.textContent = "";
@@ -194,19 +217,27 @@ const formData = {
         error.style.color = "green";
         error.textContent = "Registration successful! Redirecting...";
 
+        // Check for redirect param
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get("redirect");
+
+        if (redirectUrl) {
+             setTimeout(() => window.location.href = decodeURIComponent(redirectUrl), 900);
+             return;
+        }
+
         const userRole = formData.role;
 
         setTimeout(() => {
           if (userRole === 'admin') {
-  window.location.href = "../Admin/dashboard.html";
-} else if (userRole === 'student') {
-  window.location.href = "../Student/dashboard.html";
-} else if (userRole === 'recruiter') {
-  window.location.href = "../Recruiter/dashboard.html";
-} else {
-  alert("Invalid role returned from server!");
-}
-
+            window.location.href = "../Admin/dashboard.html";
+          } else if (userRole === 'student') {
+            window.location.href = "../Student/dashboard.html";
+          } else if (userRole === 'recruiter') {
+            window.location.href = "../Recruiter/dashboard.html";
+          } else {
+            alert("Invalid role returned from server!");
+          }
         }, 900);
       } catch (err) {
         loading.textContent = "";

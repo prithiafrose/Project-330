@@ -13,11 +13,10 @@
         <div class="container mx-auto flex justify-between items-center py-4 px-6">
             <h1 class="text-2xl font-bold text-indigo-600">HireWaY</h1>
             <nav class="space-x-6">
-                <a href="#" class="text-gray-700 hover:text-indigo-600">Home</a>
-                <a href="#" class="text-gray-700 hover:text-indigo-600">Jobs</a>
+                <a href="./index.html" class="text-gray-700 hover:text-indigo-600">Home</a>
 
-                <a href="#" class="text-gray-700 hover:text-indigo-600">Login</a>
-                <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Sign Up</a>
+                <a href="./Auth/Login.html" class="text-gray-700 hover:text-indigo-600">Login</a>
+                <a href="./Auth/Register.html" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Sign Up</a>
             </nav>
         </div>
     </header>
@@ -49,49 +48,60 @@
 
 
 
-    <!-- Popular Categories -->
-    <section class="py-16 bg-gray-100">
-        <div class="container mx-auto text-center">
-            <h3 class="text-3xl font-bold mb-8">Popular Categories</h3>
-            <div class="flex flex-wrap justify-center gap-6">
-                <span class="bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">IT & Software</span>
-                <span class="bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Design</span>
-                <span class="bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Marketing</span>
-                <span class="bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Finance</span>
-                <span class="bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Healthcare</span>
-            </div>
+ <!-- Job Types -->
+<section class="py-16 bg-gray-100">
+  <div class="container mx-auto text-center">
+    <h3 class="text-3xl font-bold text-gray-800 mb-8">Job Types</h3>
+    <div class="flex flex-wrap justify-center gap-6">
+      <span data-category="Full-Time" class="category-btn bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Full-Time</span>
+      <span data-category="Part-Time" class="category-btn bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Part-Time</span>
+      <span data-category="Internship" class="category-btn bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Internship</span>
+      <span data-category="Contract" class="category-btn bg-white px-6 py-3 rounded-full shadow hover:shadow-lg transition cursor-pointer">Contract</span>
+
+    </div>
+  </div>
+</section>
+
+
+</div>
+
         </div>
     </section>
 
-    <!-- Statistics / Testimonials -->
-    <section class="py-16">
-        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-                <h4 class="text-4xl font-bold text-indigo-600 mb-2">500+</h4>
-                <p class="text-gray-600">Companies</p>
-            </div>
-            <div>
-                <h4 class="text-4xl font-bold text-indigo-600 mb-2">10k+</h4>
-                <p class="text-gray-600">Jobs Posted</p>
-            </div>
-            <div>
-                <h4 class="text-4xl font-bold text-indigo-600 mb-2">25k+</h4>
-                <p class="text-gray-600">Active Candidates</p>
-            </div>
-        </div>
-    </section>
+    
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-200 py-8">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
-            <p>© 2025 JobPortal. All rights reserved.</p>
-            <div class="space-x-4 mt-4 md:mt-0">
-                <a href="#" class="hover:text-white">Privacy Policy</a>
-                <a href="#" class="hover:text-white">Terms of Service</a>
-                <a href="#" class="hover:text-white">Contact</a>
+      <footer class="bg-gray-800 text-gray-200 py-12">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between gap-8">
+            
+            <!-- Quick Links -->
+            <div>
+                <h4 class="text-lg font-bold mb-4">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="./index.html" class="hover:text-white">Home</a></li>
+                    <li><a href="./Auth/Login.html" class="hover:text-white">Login</a></li>
+                    <li><a href="./Auth/Register.html" class="hover:text-white">Sign Up</a></li>
+                </ul>
+            </div>
+
+            <!-- Policies & Contact -->
+            <div>
+                <h4 class="text-lg font-bold mb-4">Policies & Contact</h4>
+                <ul class="space-y-2">
+                    <li><a href="policy.html" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="terms.html" class="hover:text-white">Terms & Conditions</a></li>
+                    <li><a href="https://facebook.com/YourPage" target="_blank" class="hover:text-white">Facebook</a></li>
+                    <li>📞 01747863344</li>
+                </ul>
+            </div>
+
+            <!-- Copyright -->
+            <div class="flex items-center justify-center md:justify-end">
+                <p>© 2025 HireWaY. All rights reserved.</p>
             </div>
         </div>
     </footer>
+    <script src="index.js"></script>
 
 </body>
 </html>

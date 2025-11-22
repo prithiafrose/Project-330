@@ -1,3 +1,5 @@
+
+
 const User = require('../models/User');
 const Job = require('../models/Job');
 const Application = require('../models/Application');
@@ -95,6 +97,8 @@ const getAllUsers = async (req, res) => {
     });
     res.json(users);
   } catch (error) {
+        console.error('Error fetching users:', error); // <-- log full error
+
     res.status(500).json({ error: error.message });
   }
 };
@@ -205,7 +209,7 @@ const getAllJobs = async (req, res) => {
 
     const jobs = await Job.findAll({
       where: whereClause,
-      include: [{ model: User, as: 'poster', attributes: ['username', 'email'] }]
+      include: [{ model: User, as: 'poster', attributes: ['name', 'email'] }]
     });
     res.json(jobs);
   } catch (error) {

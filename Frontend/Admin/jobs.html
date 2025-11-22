@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Job Listings</title>
+  <title>Admin - Job Listings</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="navbar">
   <div class="logo">Admin Panel</div>
-  
+
   <div class="navbar-right">
     <div class="notification-wrapper">
       <button id="notifBtn" class="notif-btn">
@@ -22,10 +23,11 @@
         </ul>
       </div>
     </div>
-    <button id="logout-btn" class="logout-btn">Logout</button>
+    <button id="logout" class="logout-btn">Logout</button>
   </div>
 </div>
 
+  <!-- Sidebar -->
   <div class="sidebar">
     <a href="dashboard.html">Dashboard</a>
     <a href="user.html">Users</a>
@@ -33,6 +35,7 @@
     <a href="profile.html">Profile</a>
   </div>
 
+  <!-- Main Content -->
   <div class="main-content">
     <h1>Job Listings</h1>
 
@@ -47,36 +50,21 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Frontend Developer</td>
-            <td>TechCorp</td>
-            <td>Approved</td>
-            <td>
-              <button class="btn">Edit</button>
-              <button class="btn">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Backend Developer</td>
-            <td>DevSolutions</td>
-            <td>Pending</td>
-            <td>
-              <button class="btn">Approve</button>
-              <button class="btn">Delete</button>
-            </td>
-          </tr>
+        <tbody id="jobTableBody">
+          <!-- Dynamic job rows will appear here -->
         </tbody>
       </table>
     </div>
-
   </div>
-    <script src="js/utils.js"></script>
 
-  <!-- Edit Job Modal -->
-  <div id="editModal" class="modal">
+
+
+
+
+
+
+   <!-- Edit Job Modal -->
+  <div id="editModal" class="modal" style="display: none;">
     <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Edit Job</h2>
@@ -95,7 +83,7 @@
           <input type="text" id="editLocation">
         </div>
         <div class="form-group">
-          <label for="editType">Type:</label>
+          <label for="editType">Job Type:</label>
           <select id="editType">
             <option value="Full-time">Full-time</option>
             <option value="Part-time">Part-time</option>
@@ -111,16 +99,16 @@
           <label for="editDescription">Description:</label>
           <textarea id="editDescription" rows="4"></textarea>
         </div>
-        <div class="form-buttons">
-          <button type="submit" class="btn btn-primary">Update Job</button>
-          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+        <div class="form-group">
+          <button type="submit" class="btn">Update Job</button>
+          <button type="button" class="btn" onclick="closeEditModal()">Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script src="js/auth-helper.js"></script>
-  <script src="js/jobs.js"></script>
+   <script src="js/auth-helper.js"></script> 
+   <script src="js/jobs.js"></script> 
 
 </body>
 </html>

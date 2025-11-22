@@ -20,29 +20,38 @@ const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } }); // 5M
 // Apply for a job
 const apply = async (req, res) => {
   try {
-    const {
-      jobId, fullName, email, phone, education, experience, skills,
-      paymentMethod, paymentStatus
-    } = req.body;
-
-    const resumePath = req.file ? req.file.path : req.body.resume;
+    const jobId = req.body.job_id;
+    const fullName = req.body.name;
+    const email = req.body.email;
+    const coverLetter = req.body.cover_letter;
     const user_id = req.user.id;
 
-    if (!jobId) return res.status(400).json({ error: 'jobId required' });
+    if (!jobId || !fullName || !email || !coverLetter) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Check for duplicate application BEFORE processing file
+    const exists = await Application.findOne({ where: { job_id: jobId, user_id } });
+    if (exists) {
+      // If duplicate, delete uploaded file if it exists
+      if (req.file) {
+        const fs = require('fs');
+        fs.unlinkSync(req.file.path);
+      }
+      return res.status(400).json({ error: "You have already applied for this job" });
+    }
+
+    const resumePath = req.file ? req.file.path : null;
+
 
     const applicationData = {
       job_id: jobId,
       user_id,
       full_name: fullName,
       email,
-      phone,
-      education,
-      experience,
-      skills,
+      cover_letter: coverLetter,
       resume_path: resumePath,
-      payment_method: paymentMethod || 'unknown',
-      payment_status: paymentStatus || 'pending',
-      payment_amount: 100.00
+      payment_status: 'pending' // default for now
     };
 
     const application = await Application.create(applicationData);
