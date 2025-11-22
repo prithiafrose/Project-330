@@ -19,16 +19,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   try {
-    // ====================== Dashboard Stats ======================
+    
 
-    // 1. Total Users
+    
     const usersRes = await fetchWithAuth("/admin/users/stats");
     if (usersRes) {
       const data = await usersRes.json();
       document.querySelector("#totalUsersCard p").textContent = data.totalUsers;
     }
 
-    // 2. Total Jobs
+    
     const jobsRes = await fetchWithAuth("/admin/jobs/stats");
     if (jobsRes) {
       const data = await jobsRes.json();
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("logout").addEventListener("click", () => {
     localStorage.removeItem("token");
-    window.location.href = "../../Auth/Login.html";
+    window.location.href = "/Frontend/Auth/Login.html";
   });
 });
 
