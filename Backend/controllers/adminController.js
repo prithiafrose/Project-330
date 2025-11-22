@@ -37,7 +37,7 @@ const getRecentUsersStats = async (req, res) => {
 
     const recentCount = await User.count({
       where: {
-        createdAt: {
+        created_at: {
           [require('sequelize').Op.gte]: sevenDaysAgo
         }
       }
@@ -51,7 +51,7 @@ const getRecentUsersStats = async (req, res) => {
 const getRecentJobs = async (req, res) => {
   try {
     const recentJobs = await Job.findAll({
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
       limit: 5,
       attributes: ['id', 'title', 'company']
     });
@@ -91,7 +91,7 @@ const getNotifications = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'username', 'email', 'mobile', 'role', 'createdAt']
+      attributes: ['id', 'username', 'email', 'mobile', 'role', 'created_at']
     });
     res.json(users);
   } catch (error) {
