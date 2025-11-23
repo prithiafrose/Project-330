@@ -103,8 +103,24 @@ CREATE TABLE IF NOT EXISTS applications (
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+--Create user_history table
+CREATE TABLE IF NOT EXISTS user_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    action_type ENUM('VIEW', 'DOWNLOAD', 'UPLOAD', 'SUBMIT', 'LOGIN', 'LOGOUT', 'UPDATE', 'DELETE') NOT NULL,
+    item_id INT,
+    item_name VARCHAR(255),
+    item_type VARCHAR(100),
+    details TEXT,
+    page_url VARCHAR(500),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 -- Create indexes for faster searches
 CREATE INDEX idx_jobs_title ON jobs(title);
 CREATE INDEX idx_jobs_company ON jobs(company);
 CREATE INDEX idx_jobs_location ON jobs(location);
+CREATE INDEX idx_user_history_user_id ON user_history(user_id);
+CREATE INDEX idx_user_history_timestamp ON user_history(timestamp);
+CREATE INDEX idx_user_history_action_type ON user_history(action_type);
