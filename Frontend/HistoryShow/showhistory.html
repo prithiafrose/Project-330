@@ -2,32 +2,133 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Activity History</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Activity History</title>
+  <link rel="stylesheet" href="showhistory.css">
 </head>
 <body>
+  <div class="container">
+    <header class="header">
+      <h1>Activity History</h1>
+      <div class="header-actions">
+        <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+        <button id="clearHistoryBtn" class="btn btn-danger">Clear History</button>
+      </div>
+    </header>
 
-<div class="main-content">
-  <h1>Activity History</h1>
+    
+    <section class="stats-section">
+      <h2>Activity Statistics</h2>
+      <div id="statsContainer" class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Actions</h3>
+          <span id="totalActions" class="stat-number">-</span>
+        </div>
+        <div id="actionStats" class="action-stats">
+          
+        </div>
+      </div>
+    </section>
 
-  <button id="clearHistoryBtn" class="clear-btn">Clear History</button>
+    <!-- Filters Section -->
+    <section class="filters-section">
+      <h2>Filters</h2>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="actionTypeFilter">Action Type:</label>
+          <select id="actionTypeFilter">
+            <option value="">All Actions</option>
+            <option value="VIEW">View</option>
+            <option value="SUBMIT">Submit</option>
+            <option value="UPLOAD">Upload</option>
+            <option value="DOWNLOAD">Download</option>
+            <option value="UPDATE">Update</option>
+            <option value="LOGIN">Login</option>
+            <option value="LOGOUT">Logout</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="startDate">Start Date:</label>
+          <input type="date" id="startDate">
+        </div>
+        
+        <div class="filter-group">
+          <label for="endDate">End Date:</label>
+          <input type="date" id="endDate">
+        </div>
+        
+        
+        
+        <div class="filter-group">
+          <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
+          
+        </div>
+      </div>
+    </section>
 
-  <table class="history-table">
-    <thead>
-      <tr>
-        <th>Action</th>
-        <th>Item</th>
-        <th>Date & Time</th>
-      </tr>
-    </thead>
-    <tbody id="historyTableBody">
-      <tr>
-        <td colspan="3">Loading history...</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<script src="Js/history.js"></script>
+    
+    <section class="history-section">
+      <h2>Activity Log</h2>
+      <div class="table-container">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Action Type</th>
+              <th>user</th>
+              <th>Details</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="6" class="loading">Loading history...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      
+      <div class="pagination" id="pagination">
+       
+      </div>
+    </section>
+    <div id="clearModal" class="modal">
+      <div class="modal-content">
+        <h3>Clear History</h3>
+        <p>Are you sure you want to clear your history? This action cannot be undone.</p>
+        
+        <div class="clear-options">
+          <div class="clear-option">
+            <input type="radio" id="clearAll" name="clearOption" value="all" checked>
+            <label for="clearAll">Clear all history</label>
+          </div>
+          <div class="clear-option">
+            <input type="radio" id="clearByType" name="clearOption" value="type">
+            <label for="clearByType">Clear by action type:</label>
+            <select id="clearActionType" disabled>
+              <option value="VIEW">View</option>
+              <option value="SUBMIT">Submit</option>
+              <option value="UPLOAD">Upload</option>
+              <option value="DOWNLOAD">Download</option>
+              <option value="UPDATE">Update</option>
+              <option value="LOGIN">Login</option>
+              <option value="LOGOUT">Logout</option>
+            </select>
+          </div>
+          <div class="clear-option">
+            <input type="radio" id="clearByDate" name="clearOption" value="date">
+            <label for="clearByDate">Clear before date:</label>
+            <input type="date" id="clearBeforeDate" disabled>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button id="confirmClear" class="btn btn-danger">Clear History</button>
+          <button id="cancelClear" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+  <script src="showhistory.js"></script>
 </body>
 </html>
