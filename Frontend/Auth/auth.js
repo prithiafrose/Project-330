@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     emailInput.addEventListener("blur", async () => {
       const email = emailInput.value.trim();
       const emailHint = document.getElementById("emailHint");
-      
+
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         emailHint.textContent = "Please enter a valid email format";
         emailHint.className = "validation-hint invalid";
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mobileInput.addEventListener("input", () => {
       const mobile = mobileInput.value.trim();
       const mobileHint = document.getElementById("mobileHint");
-      
+
       if (mobile && !/^[0][1][0-9]{0,9}$/.test(mobile)) {
         mobileHint.textContent = "Phone must be 11 digits starting with 01";
         mobileHint.className = "validation-hint invalid";
