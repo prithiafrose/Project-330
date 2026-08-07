@@ -3,14 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchForm = document.querySelector('form');
   const jobTitleInput = searchForm.querySelector('input[placeholder="Job title or keyword"]');
   const locationInput = searchForm.querySelector('input[placeholder="Location"]');
-  const typeButtons = document.querySelectorAll('.category-btn'); // now these are job types
+  const typeButtons = document.querySelectorAll('.category-btn'); 
 
   const searchButton = searchForm.querySelector('button');
 
   let jobsData = [];
   let currentType = '';
 
-  // Fetch all jobs from backend
   async function fetchJobs() {
     try {
       const res = await fetch('http://localhost:5001/api/jobs');
@@ -26,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Render job cards with Tailwind styling
   function renderJobs() {
     const searchTerm = jobTitleInput.value.toLowerCase();
     const locationTerm = locationInput.value.toLowerCase();
@@ -60,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     if (!token) {
-        // Not logged in, redirect to login page with redirect query
         window.location.href = './Auth/Login.html?redirect=' + encodeURIComponent(`../Apply.html?id=${id}`);
         return;
     }
@@ -70,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Logged in as student, go to apply page
     window.location.href = `./Apply.html?id=${id}`;
 };
 
@@ -80,16 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
   //   window.location.href = `./Student/job-list.html?id=${id}`;
   // };
 
-  // Handle search form submission
   searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
     renderJobs();
   });
    typeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      currentType = btn.dataset.category; // currentType = Full-Time / Part-Time / etc.
-      
-      // Highlight selected button
+      currentType = btn.dataset.category; 
       typeButtons.forEach(b => b.classList.remove('bg-indigo-600', 'text-white'));
       btn.classList.add('bg-indigo-600', 'text-white');
 
@@ -97,10 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Real-time search on input
   jobTitleInput.addEventListener('input', renderJobs);
   locationInput.addEventListener('input', renderJobs);
 
-  // Initial fetch
   fetchJobs();
 });

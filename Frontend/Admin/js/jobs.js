@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // ================= Initial Setup =================
   await checkAdminAuth();
   const tableBody = document.querySelector("tbody");
   const logoutBtn = document.getElementById("logout");
@@ -10,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "../Auth/login.html";
   });
 
-  // ================= Edit Job =================
   async function loadJobForEdit(id) {
     try {
       const res = await fetchWithAuth(`/admin/jobs/${id}`);
@@ -69,7 +67,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ================= Load Jobs =================
   async function loadJobs() {
     try {
       const res = await fetchWithAuth("/admin/jobs");
@@ -110,7 +107,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ================= Button Listeners =================
   function attachJobListeners() {
     document.querySelectorAll(".approve-btn").forEach(btn => {
       btn.addEventListener("click", async (e) => {
@@ -153,13 +149,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ================= Modal Events =================
   document.querySelector(".close").addEventListener("click", closeEditModal);
   window.addEventListener("click", e => {
     if (e.target === document.getElementById("editModal")) closeEditModal();
   });
   document.getElementById("editJobForm").addEventListener("submit", handleEditSubmit);
 
-  // ================= Initial Load =================
   loadJobs();
 });

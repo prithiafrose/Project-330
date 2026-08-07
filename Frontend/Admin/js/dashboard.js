@@ -71,14 +71,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // ====================== User Status Stats ======================
     const userStatusRes = await fetchWithAuth("/admin/users/status");
     if (userStatusRes) {
       const data = await userStatusRes.json();
       document.querySelector("#userStatus").textContent = `Active: ${data.active}, Inactive: ${data.inactive}`;
     }
 
-    // ====================== Notifications ======================
     const notifRes = await fetchWithAuth("/admin/notifications");
     if (notifRes) {
       const data = await notifRes.json();
@@ -97,7 +95,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // ====================== Clickable Cards ======================
     document.getElementById("totalJobsCard").addEventListener("click", () => {
       window.location.href = "jobs.html";
     });

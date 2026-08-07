@@ -1,4 +1,3 @@
-// Common notification functionality for admin panel
 class NotificationManager {
     constructor() {
         this.notifBtn = document.getElementById("notifBtn");
@@ -12,20 +11,17 @@ class NotificationManager {
     init() {
         if (!this.notifBtn || !this.notifDropdown) return;
 
-        // Toggle dropdown on button click
         this.notifBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             this.toggleDropdown();
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener("click", (e) => {
             if (!this.notifBtn.contains(e.target) && !this.notifDropdown.contains(e.target)) {
                 this.hideDropdown();
             }
         });
 
-        // Load notifications on init
         this.loadNotifications();
     }
 
@@ -52,10 +48,8 @@ class NotificationManager {
     }
 
     updateNotificationUI(data) {
-        // Update count
         this.notifCount.textContent = data.count || 0;
 
-        // Update list
         this.notifList.innerHTML = "";
 
         if (!data.list || data.list.length === 0) {
@@ -78,26 +72,21 @@ class NotificationManager {
     }
 
     handleNotificationClick(notif) {
-        // Handle notification click (e.g., mark as read, navigate to relevant page)
         console.log("Notification clicked:", notif);
         this.hideDropdown();
         
-        // You can add specific handling based on notification type
         if (notif.actionUrl) {
             window.location.href = notif.actionUrl;
         }
     }
 
-    // Method to refresh notifications (can be called from other scripts)
     refresh() {
         this.loadNotifications();
     }
 }
 
-// Initialize notification manager when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
     window.notificationManager = new NotificationManager();
 });
 
-// Make it available globally
 window.NotificationManager = NotificationManager;
